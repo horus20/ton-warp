@@ -1,0 +1,6 @@
+contract:
+  data: fift/data.fif
+  func:
+    - func/ton-warp-v1.fc
+  tests:
+    - tests/ton-warp-v1.fc
