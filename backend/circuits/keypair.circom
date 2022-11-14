@@ -1,14 +1,14 @@
 pragma circom 2.0.0;
 
-include "../node_modules/circomlib/circuits/sha256/sha256.circom";
+include "../node_modules/circomlib/circuits/poseidon.circom";
 
 template Keypair() {
     signal input privateKey;
 
-    component hasher = Sha256(1);
-    hasher.in[0] <== privateKey;
+    component hasher = Poseidon(1);
+    hasher.inputs[0] <== privateKey;
 
-    signal output publicKey[256] <== hasher.out;
+    signal output publicKey <== hasher.out;
 }
 
 template Signature() {
@@ -16,10 +16,10 @@ template Signature() {
     signal input commitment;
     signal input merklePath;
 
-    component hasher = Sha256(3);
-    hasher.in[0] <== privateKey;
-    hasher.in[1] <== commitment;
-    hasher.in[2] <== merklePath;
+    component hasher = Poseidon(3);
+    hasher.inputs[0] <== privateKey;
+    hasher.inputs[1] <== commitment;
+    hasher.inputs[2] <== merklePath;
 
-    signal output out[256] <== hasher.out;
+    signal output out <== hasher.out;
 }

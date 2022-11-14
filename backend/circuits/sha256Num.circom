@@ -12,7 +12,6 @@ template Sha256Num(nBits) {
     }
 
     component bits2num = Bits2Num(256);
-    bits2num.in <== hasher.out;
     for (var i=0; i<256; i++) {
         bits2num.in[i] <== hasher.out[i];
     }

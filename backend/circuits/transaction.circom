@@ -2,13 +2,13 @@ pragma circom 2.0.0;
 
 include "./merkleProof.circom";
 include "./keypair.circom";
-include "./sha256Num.circom";
+include "../node_modules/circomlib/circuits/poseidon.circom";
 
 template Transaction() {
     // const
     var nIns = 2;
     var nOuts = 2;
-    var levels = 10;
+    var levels = 32;
 
     signal input root;                   // merkle root
     signal input externalAmount;         // public value of nanotons, usign for deposit/withdraw operations
@@ -19,7 +19,7 @@ template Transaction() {
     signal input inAmount[nIns];                // amount for each input
     signal input inPrivateKey[nIns];            // private key for each input
     signal input inSalt[nIns];                  // salt for each input
-    signal input inPathIndices[nIns];           // path to input in merkle tree indices
+    signal input inPathIndices[nIns];           // indices in merkle tree
     signal input inPathElements[nIns][levels];  // path to input elements
 
     // data for transaction outputs
@@ -41,20 +41,20 @@ template Transaction() {
         inKeypair[index] = Keypair();
         inKeypair[index].privateKey <== inPrivateKey[index];
 
-        inCommitmentHasher[index] = Sha256Num(3);
-        inCommitmentHasher[index].in[0] <== inAmount[index];
-        inCommitmentHasher[index].in[1] <== inKeypair[index].publicKey;
-        inCommitmentHasher[index].in[2] <== inSalt[index];
+        inCommitmentHasher[index] = Poseidon(3);
+        inCommitmentHasher[index].inputs[0] <== inAmount[index];
+        inCommitmentHasher[index].inputs[1] <== inKeypair[index].publicKey;
+        inCommitmentHasher[index].inputs[2] <== inSalt[index];
 
         inSignature[index] = Signature();
         inSignature[index].privateKey <== inPrivateKey[index];
         inSignature[index].commitment <== inCommitmentHasher[index].out;
         inSignature[index].merklePath <== inPathIndices[index];
 
-        inNullifierHasher[index] = Sha256Num(3);
-        inNullifierHasher[index].in[0] <== inCommitmentHasher[index].out;
-        inNullifierHasher[index].in[1] <== inPathIndices[index];
-        inNullifierHasher[index].in[2] <== inSignature[index].out;
+        inNullifierHasher[index] = Poseidon(3);
+        inNullifierHasher[index].inputs[0] <== inCommitmentHasher[index].out;
+        inNullifierHasher[index].inputs[1] <== inPathIndices[index];
+        inNullifierHasher[index].inputs[2] <== inSignature[index].out;
 
         inNullifierHasher[index].out === inputNullifier[index];
 
@@ -80,12 +80,13 @@ template Transaction() {
     var sumOuts = 0;
 
     for (var index = 0; index < nOuts; index++) {
-        outCommitmentHasher[index] = Sha256Num(3);
-        outCommitmentHasher[index].in[0] <== outAmount[index];
-        outCommitmentHasher[index].in[1] <== outPubkey[index];
-        outCommitmentHasher[index].in[2] <== outSalt[index];
+        outCommitmentHasher[index] = Poseidon(3);
+        outCommitmentHasher[index].inputs[0] <== outAmount[index];
+        outCommitmentHasher[index].inputs[1] <== outPubkey[index];
+        outCommitmentHasher[index].inputs[2] <== outSalt[index];
         outCommitmentHasher[index].out === outputCommitment[index];
 
+        // Check that amount fits into 255 bits to prevent overflow
         outAmountCheck[index] = Num2Bits(255);
         outAmountCheck[index].in <== outAmount[index];
 
