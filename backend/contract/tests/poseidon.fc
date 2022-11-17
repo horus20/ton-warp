@@ -34,7 +34,7 @@ _ __test_bi_sum_mul() {
   throw_if(101, sum.getByIndex(0) != mul.getByIndex(0));
   throw_if(102, sum.getByIndex(1) != mul.getByIndex(1));
 
-  return [mm, mul, sum];
+  return [mul, sum];
 }
 
 _ __test_bi_mul_big() {
@@ -52,7 +52,7 @@ _ __test_bi_mul_big() {
   var (_, stack) = invoke_method(BImul, [bi4, bi]);
   [tuple bi5] = stack;
 
-  return [bi2, bi4, bi5];
+  return [bi, bi5];
   ;;return bi2;
 }
 
