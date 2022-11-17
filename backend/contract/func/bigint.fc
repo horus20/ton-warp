@@ -3,11 +3,28 @@ const int BASE = 0xffffffffffffffffffffffffffffffff;
 ;;const int BASE = 100;
 
 tuple BIparse(int a) method_id {
-  return unsafe_tuple([a % BASE, a / BASE]);
+  tuple res = empty_tuple();
+  int rest = a;
+  while (rest > 0) {
+    res~tpush(rest % BASE);
+    rest = rest / BASE;
+  }
+
+  return res;
 }
 
 int BItoInt(tuple a) method_id {
-  return a.getByIndex(1) * BASE + a.getByIndex(0);
+  ;;return a.getByIndex(1) * BASE + a.getByIndex(0);
+  int res = 0;
+  int i = 0;
+  int len = tuple_length(a);
+  int factor = 1;
+  while (i < len) {
+    res += a.getByIndex(i) * factor;
+    factor *= BASE;
+    i += 1;
+  }
+  return res;
 }
 
 tuple BIadd(tuple a, tuple b) method_id {
