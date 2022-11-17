@@ -1,0 +1,81 @@
+;; funcions for big int
+const int BASE = 0xffffffffffffffffffffffffffffffff;
+;;const int BASE = 100;
+
+tuple BIparse(int a) method_id {
+  return unsafe_tuple([a % BASE, a / BASE]);
+}
+
+int BItoInt(tuple a) method_id {
+  return a.getByIndex(1) * BASE + a.getByIndex(0);
+}
+
+tuple BIadd(tuple a, tuple b) method_id {
+  int alen = tuple_length(a);
+  int blen = tuple_length(b);
+  int max = max(alen, blen);
+  int i = 0;
+  tuple res = empty_tuple();
+  int part = 0;
+  while(i < max) {
+    if (i < alen) {
+      part += a.getByIndex(i);
+    }
+    if (i < blen) {
+      part += b.getByIndex(i);
+    }
+    res~tpush(part % BASE);
+    part = part / BASE;
+    i += 1;
+  }
+
+  if (part > 0) {
+    res~tpush(part);
+  }
+
+  return res;
+}
+
+tuple BImul(tuple a, tuple b) method_id {
+  int alen = tuple_length(a);
+  int blen = tuple_length(b);
+  int i = 0;
+  int j = 0;
+  tuple tmpRes = empty_tuple();
+  tuple part = empty_tuple();
+  int tmp = 0;
+
+  while(i < alen) {
+    j = 0;
+    part = empty_tuple();
+    while (j < i) {
+      part~tpush(0);
+      j += 1;
+    }
+
+    tmp = 0;
+    j = 0;
+    while (j < blen) {
+      tmp = tmp + a.getByIndex(i) * b.getByIndex(j);
+      part~tpush(tmp % BASE);
+      tmp = tmp / BASE;
+
+      j += 1;
+    }
+    if (tmp > 0) {
+      part~tpush(tmp);
+    }
+    tmpRes~tpush(part);
+    i += 1;
+  }
+
+  i = 0;
+  tuple res = empty_tuple();
+  while (i < tmpRes.tuple_length()) {
+    res = BIadd(res, tmpRes.getByIndex(i));
+
+    i += 1;
+  }
+
+  return res;
+}

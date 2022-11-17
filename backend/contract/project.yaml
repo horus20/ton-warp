@@ -1,6 +1,8 @@
 contract:
-  data: fift/data.fif
+  #data: fift/data.fif
   func:
-    - func/ton-warp-v1.fc
+    - func/utils.fc
+    - func/bigint.fc
+    - func/poseidon.fc
   tests:
-    - tests/ton-warp-v1.fc
+    - tests/poseidon.fc
