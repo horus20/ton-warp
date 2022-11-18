@@ -1,3 +1,3 @@
-int tuple_length(tuple t) asm "TLEN";
+int length(tuple t) asm "TLEN";
 forall X -> X getByIndex(tuple t, int index) asm "INDEXVAR";
 

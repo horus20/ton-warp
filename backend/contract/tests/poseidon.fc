@@ -3,11 +3,11 @@ _ __test_bi() {
   int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
   ;;int a = 10000;
   ;; convert int to BigInt
-  var (int gas_used1, stack) = invoke_method(BIparse, [a]);
+  var (int gas_used1, stack) = invoke_method(long, [a]);
   [int bi] = stack;
 
   ;; convert BigInt to int
-  var (int gas_used2, stack) = invoke_method(BItoInt, [bi]);
+  var (int gas_used2, stack) = invoke_method(longToInt, [bi]);
   [int b] = stack;
   throw_if(101, b != a);
 
@@ -18,17 +18,17 @@ _ __test_bi_sum_mul() {
   int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
   ;;int a = 1000;
   ;; convert int to BigInt
-  var (int gas_used1, stack) = invoke_method(BIparse, [a]);
+  var (int gas_used1, stack) = invoke_method(long, [a]);
   [int bi] = stack;
 
   ;; sum = bi + bi
-  var (int gas_used2, stack) = invoke_method(BIadd, [bi, bi]);
+  var (int gas_used2, stack) = invoke_method(longSum, [bi, bi]);
   [tuple sum] = stack;
 
   ;; mul = bi * 2
-  var (_, stack) = invoke_method(BIparse, [2]);
+  var (_, stack) = invoke_method(long, [2]);
   [int mm] = stack;
-  var (int gas_used3, stack) = invoke_method(BImul, [bi, mm]);
+  var (int gas_used3, stack) = invoke_method(longMul, [bi, mm]);
   [tuple mul] = stack;
 
   throw_if(101, sum.getByIndex(0) != mul.getByIndex(0));
@@ -41,15 +41,15 @@ _ __test_bi_mul_big() {
   int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a79;
   ;;int a = 1000;
   ;; convert int to BigInt
-  var (_, stack) = invoke_method(BIparse, [a]);
+  var (_, stack) = invoke_method(long, [a]);
   [int bi] = stack;
 
   ;; mul = bi * bi * bi * bi * bi
-  var (_, stack) = invoke_method(BImul, [bi, bi]);
+  var (_, stack) = invoke_method(longMul, [bi, bi]);
   [tuple bi2] = stack;
-  var (_, stack) = invoke_method(BImul, [bi2, bi2]);
+  var (_, stack) = invoke_method(longMul, [bi2, bi2]);
   [tuple bi4] = stack;
-  var (_, stack) = invoke_method(BImul, [bi4, bi]);
+  var (_, stack) = invoke_method(longMul, [bi4, bi]);
   [tuple bi5] = stack;
 
   return [bi, bi5];

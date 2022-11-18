@@ -1,66 +1,122 @@
 ;; funcions for big int
 const int BASE = 0xffffffffffffffffffffffffffffffff;
+const int MEASURE = 15;
 ;;const int BASE = 100;
 
-tuple BIparse(int a) method_id {
+tuple long(int a) method_id {
   tuple res = empty_tuple();
+  tuple dec = empty_tuple();
   int rest = a;
   while (rest > 0) {
-    res~tpush(rest % BASE);
+    dec~tpush(rest % BASE);
     rest = rest / BASE;
+
+    if (dec.length() == MEASURE) {
+      res~tpush(dec);
+      dec = empty_tuple();
+    }
   }
+  res~tpush(dec);
 
   return res;
 }
 
-int BItoInt(tuple a) method_id {
+int longToInt(tuple a) method_id {
   ;;return a.getByIndex(1) * BASE + a.getByIndex(0);
   int res = 0;
   int i = 0;
-  int len = tuple_length(a);
+  int len = length(a);
   int factor = 1;
   while (i < len) {
-    res += a.getByIndex(i) * factor;
-    factor *= BASE;
+    var j = 0;
+    var part = a.getByIndex(i);
+    var partLen = part.length();
+    while (j < partLen) {
+      res += part.getByIndex(j) * factor;
+      factor *= BASE;
+
+      j += 1;
+    }
     i += 1;
   }
   return res;
 }
 
-tuple BIadd(tuple a, tuple b) method_id {
-  int alen = tuple_length(a);
-  int blen = tuple_length(b);
-  int max = max(alen, blen);
+tuple longSum(tuple a, tuple b) method_id {
+  int alen = a.length();
+  int blen = b.length();
+  int m = max(alen, blen);
   int i = 0;
   tuple res = empty_tuple();
+  var resPart = empty_tuple();
   int part = 0;
-  while(i < max) {
+  var aPart = empty_tuple();
+  var bPart = empty_tuple();
+  int aPartLen = 0;
+  int bPartLen = 0;
+
+  while(i < m) {
     if (i < alen) {
-      part += a.getByIndex(i);
+      aPart = a.getByIndex(i);
+      aPartLen = aPart.length();
+    } else {
+      aPartLen = 0;
     }
     if (i < blen) {
-      part += b.getByIndex(i);
+      bPart = b.getByIndex(i);
+      bPartLen = bPart.length();
+    } else {
+      bPartLen = 0;
     }
-    res~tpush(part % BASE);
-    part = part / BASE;
+
+    resPart = empty_tuple();
+    var j = 0;
+    int maxPart = max(aPartLen, bPartLen);
+    while (j < maxPart) {
+      if (j < aPartLen) {
+        part += aPart.getByIndex(j);
+      }
+      if (j < bPartLen) {
+        part += bPart.getByIndex(j);
+      }
+      resPart~tpush(part % BASE);
+      part = part / BASE;
+
+      j += 1;
+    }
+
+    if (part > 0) {
+      if (resPart.length() < MEASURE) {
+        resPart~tpush(part);
+        part = 0;
+      }
+    }
+
+    res~tpush(resPart);
     i += 1;
   }
 
   if (part > 0) {
-    res~tpush(part);
+    resPart = empty_tuple();
+    resPart~tpush(part);
+    res~tpush(resPart);
   }
 
   return res;
 }
 
-tuple BImul(tuple a, tuple b) method_id {
-  int alen = tuple_length(a);
-  int blen = tuple_length(b);
+tuple longMul(tuple a, tuple b) method_id {
+  int alen = a.length();
+  int blen = b.length();
   int i = 0;
   int j = 0;
   tuple tmpRes = empty_tuple();
   tuple part = empty_tuple();
   int tmp = 0;
+  var aPart = empty_tuple();
+  var bPart = empty_tuple();
+  int aPartLen = 0;
+  int bPartLen = 0;
 
   while(i < alen) {
     j = 0;
@@ -88,8 +144,8 @@ tuple BImul(tuple a, tuple b) method_id {
 
   i = 0;
   tuple res = empty_tuple();
-  while (i < tmpRes.tuple_length()) {
-    res = BIadd(res, tmpRes.getByIndex(i));
+  while (i < tmpRes.length()) {
+    res = longSum(res, tmpRes.getByIndex(i));
 
     i += 1;
   }
