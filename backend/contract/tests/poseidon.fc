@@ -1,5 +1,27 @@
+_ __test_tuple() {
+  tuple a = empty_tuple();
 
-_ __test_bi() {
+  var i = 0;
+  while(i < 255) {
+    a~tpush(i);
+
+    i += 1;
+  }
+
+  return a.length();
+}
+
+{-
+_ __test_q_const() {
+  var a = long(21888242871839275222246405745257275088548364400416034343698204186575808495617);
+  var q = Q();
+  throw_if(10001, a.getByIndex(0) != q.getByIndex(0));
+  throw_if(10002, a.getByIndex(1) != q.getByIndex(1));
+
+  return [q.longToInt()];
+}-}
+
+_ __test_long() {
   int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
   ;;int a = 10000;
   ;; convert int to BigInt
@@ -9,35 +31,70 @@ _ __test_bi() {
   ;; convert BigInt to int
   var (int gas_used2, stack) = invoke_method(longToInt, [bi]);
   [int b] = stack;
-  throw_if(101, b != a);
+  throw_if(10003, b != a);
 
   return b;
 }
 
-_ __test_bi_sum_mul() {
-  int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
-  ;;int a = 1000;
+_ __test_long_sum_mul() {
+  int a = 0x9c46e9ec68e9bd4fe1faaba294cb;
+  ;;int a = 100000;
   ;; convert int to BigInt
-  var (int gas_used1, stack) = invoke_method(long, [a]);
-  [int bi] = stack;
+  var bi = long(a);
+  var mm = long(2);
 
   ;; sum = bi + bi
-  var (int gas_used2, stack) = invoke_method(longSum, [bi, bi]);
-  [tuple sum] = stack;
-
+  tuple sum = longSum(bi, bi);
   ;; mul = bi * 2
-  var (_, stack) = invoke_method(long, [2]);
-  [int mm] = stack;
-  var (int gas_used3, stack) = invoke_method(longMul, [bi, mm]);
-  [tuple mul] = stack;
+  tuple mul = longMul(bi, mm);
 
-  throw_if(101, sum.getByIndex(0) != mul.getByIndex(0));
-  throw_if(102, sum.getByIndex(1) != mul.getByIndex(1));
-
-  return [mul, sum];
+  throw_if(10004, longToInt(sum) != longToInt(mul));
+  return [bi];
 }
 
-_ __test_bi_mul_big() {
+_ __test_mod_q() {
+  var t1 = long(21888242871839275222246405745257275088548364400416034343698204186575808495618);
+  var t1mod = longToInt(modQ(t1));
+  throw_if(10005, t1mod != 1);
+
+  var t2 = long(21888242871839275222246405745257275088548364400416034343698204186575808495616);
+  var t2mod = longToInt(modQ(t2));
+  throw_if(10006, t2mod != 21888242871839275222246405745257275088548364400416034343698204186575808495616);
+
+  var t3 = long(21888242871839275222246405745257275088548364400416034343698204186575808495617);
+  var t3mod = longToInt(modQ(t3));
+  throw_if(10007, t3mod != 0);
+
+  var t4 = long(21888242871839275222246405745257275088548364400416034343698204186575808495627);
+  var t4mod = longToInt(modQ(longMul(t4, long(2))));
+  throw_if(10008, t4mod != 20);
+
+  return [t1mod, t2mod, t3mod, t4mod];
+}
+
+_ __test_long_mul() {
+  var a = long(60606060);
+  var b = long(2252022002);
+
+  var res = longMul(a, b);
+
+  var intRes = longToInt(res);
+  throw_if(101, intRes != 136486180574532120);
+
+  ;;return [a, 888 , b, 888, res, 888, longToInt(res)];
+  return [res];
+}
+
+_ __test_long_mul2() {
+  var a = unsafe_tuple([  13278842170410042049814100824299634630, 202520333055904998307912358876116757150, 202520333055904998307912358876116757150, 185605880017375679118096350936150764341, 159717481604081321241925362690636153789, 94588016588896101146892561669050816493, 198735581226030670000470609459629987808, 307865274452033327297895807465739891902, 283892678743916240600593850749277117312, 331951963063945799221910406295871481219, 68773625597502929297746535511919706533, 74425004924190239281071266428399591781, 27978999359515071533433999266173689643, 22109181130608075404071757246225993947, 13883068359709179735560464156409 ]);
+
+  var res = sigmaFunction(a);
+
+  ;;return [a, 888 , b, 888, res, 888, longToInt(res)];
+  return [res];
+}
+
+_ __test_long_mul_big() {
   int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a79;
   ;;int a = 1000;
   ;; convert int to BigInt
@@ -56,11 +113,28 @@ _ __test_bi_mul_big() {
   ;;return bi2;
 }
 
+_ _test_long_huge() {
+  var a = long (0xffffffffffffffffffffffffffffffff1234568132165432168464561);
+  var res = long(1);
+  while (res.length() < 150) {
+    res = longMul(res, a);
+  }
+
+  return [res.length()];
+}
+
+_ __test_sigma() {
+  var a = long(0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a79);
+
+  return longToInt(sigmaFunction(a));
+}
+
 _ __test_simple_run() {
   tuple data = unsafe_tuple([1]);
-  var (int gas_used2, stack) = invoke_method(poseidon, [data]);
+  ;; var (int gas_used2, stack) = invoke_method(poseidon, [data]);
+  ;; [int hash] = stack;
+  ;; return hash;
+  var res = poseidon(data);
 
-  [int hash] = stack;
-
-  return hash;
+  return res;
 }
