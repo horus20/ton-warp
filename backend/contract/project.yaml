@@ -3,6 +3,7 @@ contract:
   func:
     - func/utils.fc
     - func/bigint.fc
+    - func/montgomery.fc
     - func/poseidon.fc
   tests:
     - tests/poseidon.fc

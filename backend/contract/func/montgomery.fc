@@ -1,0 +1,152 @@
+const int BASE = 0x10000000000000000;
+const int Q = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
+const int R = 944936681149208446651664254269745548490766851729442924617792859073125903783;  ;; rSquare
+const int M = 14042775128853446655;
+
+tuple getQ() inline {
+  return long(Q);
+}
+
+tuple getR() inline {
+  return long(R);
+}
+
+_ madd0(int a, int b, int c) {
+  var tmp = a * b;
+  var lo = tmp % BASE;
+  var hi = tmp / BASE;
+  var carry = (lo + c) / BASE;
+
+  return (hi + carry);
+}
+
+_ madd1(int a, int b, int c) {
+  var tmp = a * b;
+  var lo = tmp % BASE;
+  var hi = tmp / BASE;
+  tmp = (lo + c);
+  var carry =  tmp / BASE;
+  lo = tmp;
+
+  return [(hi + carry), lo];
+}
+
+;; hi, lo = a*b + c + d
+_ madd2(int a, int b, int c, int d) {
+  var tmp = a * b;
+  var lo = tmp % BASE;
+  var hi = tmp / BASE;
+  tmp = c + d;
+  var carry = tmp / BASE;
+  c = tmp;
+  hi = hi + carry;
+  tmp = lo + c;
+  carry = tmp / BASE;
+  lo = tmp % BASE;
+
+  return [(hi + carry), lo];
+}
+
+_ madd3(int a, int b, int c, int d, int e) {
+  var tmp = a * b;
+  var lo = tmp % BASE;
+  var hi = tmp / BASE;
+  tmp = c + d;
+  var carry = tmp / BASE;
+  c = tmp;
+  hi = hi + carry;
+  tmp = lo + c;
+  carry = tmp / BASE;
+  lo = tmp % BASE;
+
+  return [(hi + e + carry), lo];
+}
+
+_ mulGeneric(tuple x, tuple y) inline {
+  int t0 = 0;
+  int t1 = 0;
+  int t2 = 0;
+  int t3 = 0;
+  int c0 = 0;
+  int c1 = 0;
+  int c2 = 0;
+  int z0 = 0;
+  int z1 = 0;
+  int z2 = 0;
+  int z3 = 0;
+
+  ;; round 0
+  var v = 0;
+  if (x.length() > 0) {
+    v = x.getByIndex(0);
+  }
+  var tmp = v * y.getByIndex(0);
+  c1 = tmp / BASE;
+  c0 = tmp % BASE;
+  var m = c0 * M % BASE;
+  c2 = madd0(m, getQ().getByIndex(0), c0);
+  [c1, c0] = madd1(v, y.getByIndex(1), c1);
+  [c2, t0] = madd2(m, getQ().getByIndex(1), c2, c0);
+  [c1, c0] = madd1(v, y.getByIndex(2), c1);
+  [c2, t1] = madd2(m, getQ().getByIndex(2), c2, c0);
+  [c1, c0] = madd1(v, y.getByIndex(3), c1);
+  [t3, t2] = madd3(m, getQ().getByIndex(3), c0, c2, c1);
+
+  ;; round 1
+  v = 0;
+  if (x.length() > 1) {
+    v = x.getByIndex(1);
+  }
+  [c1, c0] = madd1(v, y.getByIndex(0), t0);
+  m = c0 * M % BASE;
+  c2 = madd0(m, getQ().getByIndex(0), c0);
+  [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
+  [c2, t0] = madd2(m, getQ().getByIndex(1), c2, c0);
+  [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
+	[c2, t1] = madd2(m, getQ().getByIndex(2), c2, c0);
+	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
+	[t3, t2] = madd3(m, getQ().getByIndex(3), c0, c2, c1);
+
+  ;; round 2
+  v = 0;
+  if (x.length() > 2) {
+    v = x.getByIndex(2);
+  }
+  [c1, c0] = madd1(v, y.getByIndex(0), t0);
+  m = c0 * M % BASE;
+  c2 = madd0(m, getQ().getByIndex(0), c0);
+  [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
+  [c2, t0] = madd2(m, getQ().getByIndex(1), c2, c0);
+  [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
+	[c2, t1] = madd2(m, getQ().getByIndex(2), c2, c0);
+	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
+	[t3, t2] = madd3(m, getQ().getByIndex(3), c0, c2, c1);
+
+  ;; round 3
+  v = 0;
+  if (x.length() > 3) {
+    v = x.getByIndex(3);
+  }
+  [c1, c0] = madd1(v, y.getByIndex(0), t0);
+  m = c0 * M % BASE;
+  c2 = madd0(m, getQ().getByIndex(0), c0);
+  [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
+  [c2, z0] = madd2(m, getQ().getByIndex(1), c2, c0);
+  [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
+  [c2, z1] = madd2(m, getQ().getByIndex(2), c2, c0);
+	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
+	[z3, z2] = madd3(m, getQ().getByIndex(3), c0, c2, c1);
+
+  {-
+  var f = (z3 < getQ().getByIndex(3) || (z3 == getQ().getByIndex(3) && (z2 < getQ().getByIndex(2) || (z2 == getQ().getByIndex(2) && (z1 < getQ().getByIndex(1) || (z1 == getQ().getByIndex(1) && (z0 < getQ().getByIndex(0))))))));
+  if (!f) {
+		var b uint64
+		z[0], b = bits.Sub64(z[0], 4891460686036598785, 0)
+		z[1], b = bits.Sub64(z[1], 2896914383306846353, b)
+		z[2], b = bits.Sub64(z[2], 13281191951274694749, b)
+		z[3], _ = bits.Sub64(z[3], 3486998266802970665, b)
+	}-}
+
+  ;;return [t0, t1, t2, t3, c0, c1, c2, m];
+  return [z0, z1, z2, z3];
+}

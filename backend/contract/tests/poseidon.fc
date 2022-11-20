@@ -19,8 +19,10 @@ _ __test_q_const() {
   var q = unsafe_tuple([4891460686036598785, 2896914383306846353, 13281191951274694749, 3486998266802970665]);
   var r = unsafe_tuple([1997599621687373223, 6052339484930628067, 10108755138030829701, 150537098327114917]);
 
+  var inr = unsafe_tuple([12436184717236109307, 3962172157175319849, 7381016538464732718, 1011752739694698287]);
+
   ;;return [a, longToInt(r)];
-  return [a, qOrg, longToInt(q), longToInt(r)];
+  return [a, qOrg, longToInt(q), longToInt(r), longToInt(inr)];
 }
 
 _ __test_long() {
@@ -137,6 +139,15 @@ _ __test_mod() {
   var mm2 = fromMod(mm1);
 
   return [mm1, mm2];
+}
+
+_ __test_mul_generic() {
+  var x = unsafe_tuple([1, 0, 0, 0]);
+  var y = unsafe_tuple([1997599621687373223, 6052339484930628067, 10108755138030829701, 150537098327114917]);
+
+  var res = mulGeneric(x, y);
+
+  return res;
 }
 
 _ __test_simple_run() {
