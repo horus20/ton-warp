@@ -1,5 +1,7 @@
 ;; funcions for big int
-const int BASE = 0xffffffffffffffffffffffffffffffff;
+;;const int BASE = 0xffffffffffffffffffffffffffffffff;
+;;const int BASE = 18446744073709551616; ;;0x10000000000000000
+const int BASE = 0x10000000000000000;
 ;;const int BASE = 100;
 
 tuple long(int a) inline {
@@ -16,12 +18,15 @@ tuple long(int a) inline {
 int longToInt(tuple a) {
   int res = 0;
   int i = 0;
-  int len = length(a);
+  int len = a.length();
   int factor = 1;
   while (i < len) {
     res += a.getByIndex(i) * factor;
-    factor *= BASE;
     i += 1;
+
+    if (i < len) {
+      factor *= BASE;
+    }
   }
   return res;
 }
