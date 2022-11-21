@@ -26,7 +26,7 @@ _ madd1(int a, int b, int c) {
   var hi = tmp / BASE;
   tmp = (lo + c);
   var carry =  tmp / BASE;
-  lo = tmp;
+  lo = tmp % BASE;
 
   return [(hi + carry), lo];
 }
@@ -38,7 +38,7 @@ _ madd2(int a, int b, int c, int d) {
   var hi = tmp / BASE;
   tmp = c + d;
   var carry = tmp / BASE;
-  c = tmp;
+  c = tmp % BASE;
   hi = hi + carry;
   tmp = lo + c;
   carry = tmp / BASE;
@@ -53,7 +53,7 @@ _ madd3(int a, int b, int c, int d, int e) {
   var hi = tmp / BASE;
   tmp = c + d;
   var carry = tmp / BASE;
-  c = tmp;
+  c = tmp % BASE;
   hi = hi + carry;
   tmp = lo + c;
   carry = tmp / BASE;
@@ -62,7 +62,17 @@ _ madd3(int a, int b, int c, int d, int e) {
   return [(hi + e + carry), lo];
 }
 
-_ mulGeneric(tuple x, tuple y) inline {
+tuple checkOverflow(int z0, int z1, int z2, int z3) inline {
+  var z = unsafe_tuple([z0, z1, z2, z3]);
+  var zI = longToInt(z);
+  if (zI > Q) {
+		z = long(zI - Q);
+  }
+
+  return z;
+}
+
+tuple mulGeneric(tuple x, tuple y) inline {
   int t0 = 0;
   int t1 = 0;
   int t2 = 0;
@@ -137,16 +147,32 @@ _ mulGeneric(tuple x, tuple y) inline {
 	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
 	[z3, z2] = madd3(m, getQ().getByIndex(3), c0, c2, c1);
 
-  {-
-  var f = (z3 < getQ().getByIndex(3) || (z3 == getQ().getByIndex(3) && (z2 < getQ().getByIndex(2) || (z2 == getQ().getByIndex(2) && (z1 < getQ().getByIndex(1) || (z1 == getQ().getByIndex(1) && (z0 < getQ().getByIndex(0))))))));
-  if (!f) {
-		var b uint64
-		z[0], b = bits.Sub64(z[0], 4891460686036598785, 0)
-		z[1], b = bits.Sub64(z[1], 2896914383306846353, b)
-		z[2], b = bits.Sub64(z[2], 13281191951274694749, b)
-		z[3], _ = bits.Sub64(z[3], 3486998266802970665, b)
-	}-}
+  ;;return unsafe_tuple([z, t0, t1, t2, t3, c0, c1, c2, m, v]);
+  return checkOverflow(z0, z1, z2, z3);
+}
 
-  ;;return [t0, t1, t2, t3, c0, c1, c2, m];
-  return [z0, z1, z2, z3];
+tuple addGeneric(tuple x, tuple y) inline {
+  int z0 = 0;
+  int z1 = 0;
+  int z2 = 0;
+  int z3 = 0;
+  int carry = 0;
+
+  int tmp = x.getByIndex(0) + y.getByIndex(0);
+  carry = tmp / BASE;
+  z0 = tmp % BASE;
+
+  tmp = x.getByIndex(1) + y.getByIndex(1) + carry;
+  carry = tmp / BASE;
+  z1 = tmp % BASE;
+
+  tmp = x.getByIndex(2) + y.getByIndex(2) + carry;
+  carry = tmp / BASE;
+  z2 = tmp % BASE;
+
+  tmp = x.getByIndex(3) + y.getByIndex(3) + carry;
+  carry = tmp / BASE;
+  z3 = tmp % BASE;
+
+  return checkOverflow(z0, z1, z2, z3);
 }
