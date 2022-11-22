@@ -5,61 +5,44 @@ const int Q = 218882428718392752222464057452572750885483644004160343436982041865
 const int R = 944936681149208446651664254269745548490766851729442924617792859073125903783;  ;; rSquare
 const int M = 14042775128853446655;
 
-tuple getQ() inline {
-  return long(Q);
-}
+const int Q0 = 4891460686036598785;
+const int Q1 = 2896914383306846353;
+const int Q2 = 13281191951274694749;
+const int Q3 = 3486998266802970665;
 
 tuple getR() inline {
-  return long(R);
+  return unsafe_tuple([1997599621687373223, 6052339484930628067, 10108755138030829701, 150537098327114917]);
 }
 
 _ madd0(int a, int b, int c) inline {
-  var tmp = a * b;
-  var lo = tmp % BASE;
-  var hi = tmp / BASE;
+  var (hi, lo) = (a * b) /% BASE;
   var carry = (lo + c) / BASE;
 
   return (hi + carry);
 }
 
 _ madd1(int a, int b, int c) inline {
-  var tmp = a * b;
-  var lo = tmp % BASE;
-  var hi = tmp / BASE;
-  tmp = (lo + c);
-  var carry =  tmp / BASE;
-  lo = tmp % BASE;
+  var (hi, lo) = (a * b) /% BASE;
+  var (carry, lo) = (lo + c) /% BASE;
 
   return [(hi + carry), lo];
 }
 
 ;; hi, lo = a*b + c + d
 _ madd2(int a, int b, int c, int d) inline {
-  var tmp = a * b;
-  var lo = tmp % BASE;
-  var hi = tmp / BASE;
-  tmp = c + d;
-  var carry = tmp / BASE;
-  c = tmp % BASE;
+  var (hi, lo) = (a * b) /% BASE;
+  var (carry, c) = (c + d) /% BASE;
   hi = hi + carry;
-  tmp = lo + c;
-  carry = tmp / BASE;
-  lo = tmp % BASE;
+  var (carry, lo) = (lo + c) /% BASE;
 
   return [(hi + carry), lo];
 }
 
 _ madd3(int a, int b, int c, int d, int e) inline {
-  var tmp = a * b;
-  var lo = tmp % BASE;
-  var hi = tmp / BASE;
-  tmp = c + d;
-  var carry = tmp / BASE;
-  c = tmp % BASE;
+  var (hi, lo) = (a * b) /% BASE;
+  var (carry, c) = (c + d) /% BASE;
   hi = hi + carry;
-  tmp = lo + c;
-  carry = tmp / BASE;
-  lo = tmp % BASE;
+  var (carry, lo) = (lo + c) /% BASE;
 
   return [(hi + e + carry), lo];
 }
@@ -86,7 +69,6 @@ tuple mulGeneric(tuple x, tuple y) inline {
   int z1 = 0;
   int z2 = 0;
   int z3 = 0;
-  var q = getQ();
 
   ;; round 0
   var v = 0;
@@ -97,13 +79,13 @@ tuple mulGeneric(tuple x, tuple y) inline {
   c1 = tmp / BASE;
   c0 = tmp % BASE;
   var m = c0 * M % BASE;
-  c2 = madd0(m, q.getByIndex(0), c0);
+  c2 = madd0(m, Q0, c0);
   [c1, c0] = madd1(v, y.getByIndex(1), c1);
-  [c2, t0] = madd2(m, q.getByIndex(1), c2, c0);
+  [c2, t0] = madd2(m, Q1, c2, c0);
   [c1, c0] = madd1(v, y.getByIndex(2), c1);
-  [c2, t1] = madd2(m, q.getByIndex(2), c2, c0);
+  [c2, t1] = madd2(m, Q2, c2, c0);
   [c1, c0] = madd1(v, y.getByIndex(3), c1);
-  [t3, t2] = madd3(m, q.getByIndex(3), c0, c2, c1);
+  [t3, t2] = madd3(m, Q3, c0, c2, c1);
 
   ;; round 1
   v = 0;
@@ -112,13 +94,13 @@ tuple mulGeneric(tuple x, tuple y) inline {
   }
   [c1, c0] = madd1(v, y.getByIndex(0), t0);
   m = c0 * M % BASE;
-  c2 = madd0(m, q.getByIndex(0), c0);
+  c2 = madd0(m, Q0, c0);
   [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
-  [c2, t0] = madd2(m, q.getByIndex(1), c2, c0);
+  [c2, t0] = madd2(m, Q1, c2, c0);
   [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
-	[c2, t1] = madd2(m, q.getByIndex(2), c2, c0);
+	[c2, t1] = madd2(m, Q2, c2, c0);
 	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
-	[t3, t2] = madd3(m, q.getByIndex(3), c0, c2, c1);
+	[t3, t2] = madd3(m, Q3, c0, c2, c1);
 
   ;; round 2
   v = 0;
@@ -127,13 +109,13 @@ tuple mulGeneric(tuple x, tuple y) inline {
   }
   [c1, c0] = madd1(v, y.getByIndex(0), t0);
   m = c0 * M % BASE;
-  c2 = madd0(m, q.getByIndex(0), c0);
+  c2 = madd0(m, Q0, c0);
   [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
-  [c2, t0] = madd2(m, q.getByIndex(1), c2, c0);
+  [c2, t0] = madd2(m, Q1, c2, c0);
   [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
-	[c2, t1] = madd2(m, q.getByIndex(2), c2, c0);
+	[c2, t1] = madd2(m, Q2, c2, c0);
 	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
-	[t3, t2] = madd3(m, q.getByIndex(3), c0, c2, c1);
+	[t3, t2] = madd3(m, Q3, c0, c2, c1);
 
   ;; round 3
   v = 0;
@@ -142,13 +124,13 @@ tuple mulGeneric(tuple x, tuple y) inline {
   }
   [c1, c0] = madd1(v, y.getByIndex(0), t0);
   m = c0 * M % BASE;
-  c2 = madd0(m, q.getByIndex(0), c0);
+  c2 = madd0(m, Q0, c0);
   [c1, c0] = madd2(v, y.getByIndex(1), c1, t1);
-  [c2, z0] = madd2(m, q.getByIndex(1), c2, c0);
+  [c2, z0] = madd2(m, Q1, c2, c0);
   [c1, c0] = madd2(v, y.getByIndex(2), c1, t2);
-  [c2, z1] = madd2(m, q.getByIndex(2), c2, c0);
+  [c2, z1] = madd2(m, Q2, c2, c0);
 	[c1, c0] = madd2(v, y.getByIndex(3), c1, t3);
-	[z3, z2] = madd3(m, q.getByIndex(3), c0, c2, c1);
+	[z3, z2] = madd3(m, Q3, c0, c2, c1);
 
   ;;return unsafe_tuple([z, t0, t1, t2, t3, c0, c1, c2, m, v]);
   return checkOverflow(z0, z1, z2, z3);
@@ -183,14 +165,12 @@ tuple addGeneric(tuple x, tuple y) inline {
 ;; the following lines implement z = z * 1
 ;; with a modified CIOS montgomery multiplication
 tuple fromMont(int z0, int z1, int z2, int z3) inline {
-  var q = getQ();
-
   repeat (4) {
     var m = z0 * M % BASE;
-    var c = madd0(m, q.getByIndex(0), z0);
-    [c, z0] = madd2(m, q.getByIndex(1), z1, c);
-    [c, z1] = madd2(m, q.getByIndex(2), z2, c);
-    [c, z2] = madd2(m, q.getByIndex(3), z3, c);
+    var c = madd0(m, Q0, z0);
+    [c, z0] = madd2(m, Q1, z1, c);
+    [c, z1] = madd2(m, Q2, z2, c);
+    [c, z2] = madd2(m, Q3, z3, c);
     z3 = c;
   }
 

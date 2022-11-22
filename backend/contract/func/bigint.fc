@@ -5,10 +5,11 @@ const int BASE = 0x10000000000000000;
 
 tuple long(int a) inline {
   tuple res = empty_tuple();
-  int rest = a;
+  var rest = a;
   while (rest > 0) {
-    res~tpush(rest % BASE);
-    rest = rest / BASE;
+    var (b, carry) = rest /% BASE;
+    res~tpush(carry);
+    rest = b;
   }
 
   return res;
