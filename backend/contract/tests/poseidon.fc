@@ -26,18 +26,20 @@ _ __test_q_const() {
 }
 
 _ __test_long() {
-  int a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
+  var a = 0x9c46e9ec68e9bd4fe1faaba294cba38a71aa177534cdd1b6c7dc0dbd0abd7a7;
+  var r = long(a);
+  var b = longToInt(r);
   ;;int a = 10000;
   ;; convert int to BigInt
-  var (int gas_used1, stack) = invoke_method(long, [a]);
+  {-var (int gas_used1, stack) = invoke_method(long, [a]);
   [int bi] = stack;
 
   ;; convert BigInt to int
   var (int gas_used2, stack) = invoke_method(longToInt, [bi]);
-  [int b] = stack;
+  [int b] = stack;-}
   throw_if(10003, b != a);
 
-  return b;
+  return [r];
 }
 
 _ __test_long_sum_mul() {
@@ -170,10 +172,18 @@ _ __test_add() {
   return [res, longToInt(res)];
 }
 
-_ __test_poseidon_one_run() {
+_ __test_poseidon_run_one() {
   tuple data = unsafe_tuple([1]);
   var res = poseidon(data);
   throw_if(11000, res != 18586133768512220936620570745912940619677854269274689475585506675881198879027);
+
+  return res;
+}
+
+_ __test_poseidon_run_two() {
+  tuple data = unsafe_tuple([1, 2]);
+  var res = poseidon(data);
+  throw_if(11000, res != 7853200120776062878684798364095072458815029376092732009249414926327459813530);
 
   return res;
 }
