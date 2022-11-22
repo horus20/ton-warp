@@ -29,7 +29,6 @@ tuple arkFunction(in, t, C, r) inline {
   var res = empty_tuple();
   while (i < t) {
     var (pCd, pCi) = (i + r) /% 10;
-    ;;var pC = mulGeneric(long(C.getByIndex(pCd).getByIndex(pCi)), getR());
     var pC = C.getByIndex(pCd).getByIndex(pCi);
     res~tpush(addGeneric(in.getByIndex(i), pC));
 
@@ -48,7 +47,8 @@ tuple mixFunction(in, t, M) inline {
     var lc = unsafe_tuple([0, 0, 0, 0]);
     j = 0;
     while (j < t) {
-      var pM = mulGeneric(long(M.getByIndex(j).getByIndex(i)), getR());
+      ;;var pM = mulGeneric(long(M.getByIndex(j).getByIndex(i)), getR());
+      var pM = M.getByIndex(j).getByIndex(i);
       lc = addGeneric(lc, mulGeneric(pM, in.getByIndex(j)));
 
       j += 1;
@@ -84,29 +84,29 @@ _ poseidon(tuple inputs) method_id {
     [], ;; 1
     [   ;; 2
         [
-            0x66f6f85d6f68a85ec10345351a23a3aaf07f38af8c952a7bceca70bd2af7ad5,
-            0xcc57cdbb08507d62bf67a4493cc262fb6c09d557013fff1f573f431221f8ff9
+            [17920654652615044516, 5315228629426935734, 16921197825591404379, 2189197718402122891],
+            [6011552397623934548, 6038211121966084978, 18341914591778152024, 3351495707820976067]
         ],
         [
-            0x2b9d4b4110c9ae997782e1509b1d0fdb20a7c02bbd8bea7305462b9f8125b1e8,
-            0x1274e649a32ed355a31a6ed69724e1adade857e86eb5c3a121bcd147943203c8
+            [14492560017976159917, 4919046997046981090, 263614296871819263, 2759311356546844781],
+            [16349074296086608540, 7458233725163740651, 5446347661749231797, 1359884895167300752]
         ]
     ],
     [   ;; 3
         [
-            0x109b7f411ba0e4c9b2b70caf5c36a7b194be7c11ad24378bfedb68592ba8118b,
-            0x2969f27eed31a480b9c36c764379dbca2cc8fdd1415c3dded62940bcde0bd771,
-            0x143021ec686a3f330d5f9e654638065ce6cd79e28c5b3753326244ee65a1b1a7
+            [17503398944334214103, 9230635622294457373, 15972181701675803672, 1035501513956951521],
+            [7425745125907058133, 6258575766396631982, 6672317176208297581, 1888294593578598440],
+            [14709430803763308375, 18229395017556423917, 14478888826236012152, 403155403580284040]
         ],
         [
-            0x16ed41e13bb9c0c66ae119424fddbcbc9314dc9fdbdeea55d6c64543dc4903e0,
-            0x2e2419f9ec02ec394c9871c832963dc1b89d743c8c7b964029b2311687b1fe23,
-            0x176cc029695ad02582a70eff08a6fd99d057e12e58e7d7b6b16cdfabc8ee2911
+            [3555859163746403433, 10741605658797293728, 13576548464965265343, 569316227345355306],
+            [17300927987635952711, 6895825125235677893, 7535349927233173892, 1004824698395431955],
+            [1681560448056422141, 2077804014413570479, 8164163776005235820, 19069250833956841]
         ],
         [
-            0x2b90bba00fca0589f617e7dcbfe82e0df706ab640ceb247b791a93b74e36736d,
-            0x101071f0032379b697315876690f053d148d4e109f5fb065c8aacc55a0f89bfa,
-            0x19a3fc0a56702bf417ba7fee3802593fa644470307043f7773279cd71d25d5e0
+            [2951080920043055536, 4426455047811528265, 8768180898619925469, 274491192378258711],
+            [3644467615925741357, 9640990985829502495, 7431090390984653628, 1714274394685692289],
+            [5508715729952870696, 15229942319626936684, 5551071126244229286, 1333837310051341211]
         ]
     ]
   ]);
@@ -116,29 +116,29 @@ _ poseidon(tuple inputs) method_id {
     [], ;; 1
     [   ;; 2
         [
-            0x66f6f85d6f68a85ec10345351a23a3aaf07f38af8c952a7bceca70bd2af7ad5,
-            0x20e3e914631964e394d269ae59f17efee3fecee512cbb163d32cc760be574bd6
+            [17920654652615044516, 5315228629426935734, 16921197825591404379, 2189197718402122891],
+            [7470729755515319992, 17041816498400614106, 13375160378833856321, 560417305746632720]
         ],
         [
-            0x2b9d4b4110c9ae997782e1509b1d0fdb20a7c02bbd8bea7305462b9f8125b1e8,
-            0x10a44ed9dd9ce568563394632833d8633690d329ae737c8c7220a9b197ee3f46
+            [14492560017976159917, 4919046997046981090, 263614296871819263, 2759311356546844781],
+            [14737248955252893158, 9988285311957681526, 15162306182917172733, 1523291054249726037]
         ]
     ],
     [   ;; 3
         [
-            0x109b7f411ba0e4c9b2b70caf5c36a7b194be7c11ad24378bfedb68592ba8118b,
-            0x1e6f20a11d1e31e43f83dcedddb9a0236203f5f24ae72c925a8a79a66831f51d,
-            0x1bd8c528472e57bdc722a141f8785694484f426725403ae24084e3027e782467
+            [17503398944334214103, 9230635622294457373, 15972181701675803672, 1035501513956951521],
+            [10031185618283607160, 1021827904899329408, 2027898939202150942, 644829577581408112],
+            [17693094766018701067, 580253372102123280, 17792480949843436565, 3287654480373894136]
         ],
         [
-            0x16ed41e13bb9c0c66ae119424fddbcbc9314dc9fdbdeea55d6c64543dc4903e0,
-            0x2d51ba82c8073c6d6bacf1ad5e56655b7143625b0a9e9c3190527a1a5f05079a,
-            0x1b07d6d51e6f7e97e0ab10fc2e51ea83ce0611f940ff0731b5f927fe8d6a77c9
+            [3555859163746403433, 10741605658797293728, 13576548464965265343, 569316227345355306],
+            [320434089056656007, 10023327187822129910, 15472697854952844802, 1014040493118211725],
+            [17437799077791925149, 4150214198986295062, 2074485014963175651, 667476728929731378]
         ],
         [
-            0x2b90bba00fca0589f617e7dcbfe82e0df706ab640ceb247b791a93b74e36736d,
-            0x11e12a40d262ae88e8376f62d19edf43093cdef1ccf34d985a3e53f0bc5765a0,
-            0x221c170e4d02a2479c6f3e47b5ff55781574f980d89038308a3ef37cce8463bd
+            [2951080920043055536, 4426455047811528265, 8768180898619925469, 274491192378258711],
+            [3685791004738251084, 2153559632285600265, 13752442926386106140, 1494341733206578977],
+            [15563625038501543063, 7830459524777687006, 1326806468190506924, 533126919063978101]
         ]
     ]
   ]);
@@ -151,6 +151,7 @@ _ poseidon(tuple inputs) method_id {
   var nOuts = 1;
   var t = nInputs + 1;
   var nRoundsF = 8;
+  var nRoundsFH = nRoundsF / 2;
   var nRoundsP = N_ROUNDS_P.getByIndex(t - 2);
   tuple C = POSEIDON_C.getByIndex(t);
   tuple S = POSEIDON_S.getByIndex(t);
@@ -179,7 +180,7 @@ _ poseidon(tuple inputs) method_id {
   state = arkFunction(state, t, C, 0);
 
   ;; 100
-  while (r < nRoundsF / 2 - 1) {
+  while (r < nRoundsFH - 1) {
     j = 0;
     state = sigmaTFunction(state, t);
 
@@ -195,7 +196,7 @@ _ poseidon(tuple inputs) method_id {
   state = sigmaTFunction(state, t);
 
   ;; 128
-  state = arkFunction(state, t, C, (nRoundsF / 2) * t);
+  state = arkFunction(state, t, C, (nRoundsFH) * t);
 
   ;; 133
   state = mixFunction(state, t, POSEIDON_P.getByIndex(t));
@@ -204,7 +205,7 @@ _ poseidon(tuple inputs) method_id {
   r = 0;
   while (r < nRoundsP) {  ;;nRoundsP
     tmpState = empty_tuple();
-    var (pCd, pCi) = ((nRoundsF / 2 + 1) * t + r) /% 10;
+    var (pCd, pCi) = ((nRoundsFH + 1) * t + r) /% 10;
     pC = C.getByIndex(pCd).getByIndex(pCi);
     tmpState~tpush(addGeneric(sigmaFunction(state.getByIndex(0)), pC));
 
@@ -217,9 +218,10 @@ _ poseidon(tuple inputs) method_id {
 
     state = empty_tuple();
     var newState0 = initState;
+    var dt = (t * 2 - 1) * r;
     i = 0;
     while (i < t) {
-      var (pSindex, pSindex100) = ((t * 2 - 1) * r + i) /% 100;
+      var (pSindex, pSindex100) = (dt + i) /% 100;
       var (pSd, pSi) = (pSindex100) /% 10;
       var pS = S.getByIndex(pSindex).getByIndex(pSd).getByIndex(pSi);
       newState0 = addGeneric(newState0, mulGeneric(tmpState.getByIndex(i), pS));
@@ -230,7 +232,7 @@ _ poseidon(tuple inputs) method_id {
 
     i = 1;
     while (i < t) {
-      var (pSindex, pSindex100) = ((t * 2 - 1) * r + t + i - 1) /% 100;
+      var (pSindex, pSindex100) = (dt + t + i - 1) /% 100;
       var (pSd, pSi) = (pSindex100) /% 10;
       var pS = S.getByIndex(pSindex).getByIndex(pSd).getByIndex(pSi);
       state~tpush(addGeneric(tmpState.getByIndex(i), mulGeneric(tmpState.getByIndex(0), pS)));
@@ -243,11 +245,11 @@ _ poseidon(tuple inputs) method_id {
 
   ;; 161
   r = 0;
-  while (r < nRoundsF / 2 - 1) {
+  while (r < nRoundsFH - 1) {
     state = sigmaTFunction(state, t);
 
     ;; 171
-    state = arkFunction(state, t, C, (nRoundsF / 2 + 1) * t + nRoundsP + r * t);
+    state = arkFunction(state, t, C, (nRoundsFH + 1) * t + nRoundsP + r * t);
 
     ;; 176
     state = mixFunction(state, t, posM);
@@ -265,7 +267,4 @@ _ poseidon(tuple inputs) method_id {
   ;; state -> out
   var z = state.getByIndex(0);
   return longToInt(fromMont(z.getByIndex(0), z.getByIndex(1), z.getByIndex(2), z.getByIndex(3)));
-  ;;return state;
-  ;;return [state, pCindex];
 }
-

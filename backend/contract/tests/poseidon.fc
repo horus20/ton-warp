@@ -115,6 +115,15 @@ _ __test_mod() {
   return [mm1, mm2];
 }-}
 
+_ __test_QQQQQQ() {
+  var x = long(0x10a44ed9dd9ce568563394632833d8633690d329ae737c8c7220a9b197ee3f46);
+  var y = unsafe_tuple([1997599621687373223, 6052339484930628067, 10108755138030829701, 150537098327114917]);
+
+  tuple res = mulGeneric(x, y);
+
+  return res;
+}
+
 _ __test_mul_generic() {
   var x = unsafe_tuple([1, 0, 0, 0]);
   var y = unsafe_tuple([1997599621687373223, 6052339484930628067, 10108755138030829701, 150537098327114917]);
