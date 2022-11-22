@@ -1,5 +1,4 @@
 ;; funcions for big int
-;;const int BASE = 0xffffffffffffffffffffffffffffffff;
 ;;const int BASE = 18446744073709551616; ;;0x10000000000000000
 const int BASE = 0x10000000000000000;
 ;;const int BASE = 100;
